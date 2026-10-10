@@ -42,6 +42,8 @@ Building still requires manual setup and locally built packages.
 
 - [Build and setup guide](docs/BUILDING.md): prerequisites, inputs, patch order,
   and preparation of new UTM bundles.
+- [Review the changes](review/README.md): diffs against pinned upstream source,
+  guest hooks, and the full published source changeset.
 - [Contributing](CONTRIBUTING.md): run the tests and propose focused changes.
 - [Security policy](SECURITY.md): scope, reporting, and known limitations.
 - [Build provenance](artifacts/BUILD-PROVENANCE.md): source commits and hashes.

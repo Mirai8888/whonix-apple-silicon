@@ -1,0 +1,74 @@
+diff --git a/build-steps.d/3500_install-packages b/build-steps.d/3500_install-packages
+index 9077970..f44ddc7 100755
+--- a/build-steps.d/3500_install-packages
++++ b/build-steps.d/3500_install-packages
+@@ -52,7 +52,7 @@ apt_get_parse_unmet_dependency() {
+          continue
+       else
+          ## match
+-         if [ "${remember_pkg[${unmet_dependency}]}" = "true" ]; then
++         if [ "${remember_pkg[${unmet_dependency}]:-}" = "true" ]; then
+             continue
+          fi
+          printf "%s\n" "${bold}${cyan}INFO: Found unmet dependency: ${unmet_dependency}. \
+@@ -207,6 +207,9 @@ pkg-list-install() {
+ }
+ 
+ install-packages() {
++   local bootstrap_helper_file
++   local adduser_uid_setting adduser_uid_key adduser_uid_assignment
++
+    exception_handler_setup "exception_handler_unchroot_unmount" ERR INT TERM
+ 
+    sync
+@@ -222,7 +225,27 @@ install-packages() {
+    ## files in Git from applying to the image being built.
+    ${SUDO_TO_ROOT} install --mode=0644 -- "${source_code_folder_dist}/packages/kicksecure/dist-base-files/usr/share/derivative-base-files/20_dist-base-files.cfg" "${CHROOT_FOLDER}/etc/default/grub.d/20_dist-base-files.cfg"
+ 
+-   ${SUDO_TO_ROOT} install --mode=0755 -- "${source_code_folder_dist}/packages/kicksecure/helper-scripts/usr/bin/apt-get-noninteractive" "${CHROOT_FOLDER}/usr/bin/apt-get-noninteractive"
++   ## The package wrapper runs before helper-scripts itself is installed.
++   for bootstrap_helper_file in \
++      usr/bin/apt-get-noninteractive \
++      usr/bin/sanitize-echo \
++      usr/libexec/helper-scripts/strings.bsh \
++      usr/libexec/helper-scripts/wc-test.sh \
++      usr/libexec/helper-scripts/check_runtime.bsh \
++      usr/lib/python3/dist-packages/sanitize_string/__init__.py \
++      usr/lib/python3/dist-packages/sanitize_string/sanitize_echo.py \
++      usr/lib/python3/dist-packages/sanitize_string/sanitize_string.py \
++      usr/lib/python3/dist-packages/sanitize_string/sanitize_string_lib.py \
++      usr/lib/python3/dist-packages/strip_markup/__init__.py \
++      usr/lib/python3/dist-packages/strip_markup/strip_markup_lib.py \
++      usr/lib/python3/dist-packages/stdisplay/__init__.py \
++      usr/lib/python3/dist-packages/stdisplay/stdisplay.py \
++      usr/share/helper-scripts/policy-rc.d
++   do
++      ${SUDO_TO_ROOT} install -D --mode=0755 -- \
++         "${source_code_folder_dist}/packages/kicksecure/helper-scripts/${bootstrap_helper_file}" \
++         "${CHROOT_FOLDER}/${bootstrap_helper_file}"
++   done
+ 
+    "${dist_source_help_steps_folder}/prevent-daemons-from-starting" "$@"
+ 
+@@ -444,6 +467,21 @@ ${dist_build_script_skip_package_install}${reset}"
+       ## always marking user-sysmaint-split for installation here.
+    fi
+ 
++   ## get-user-list rejects Debian's commented UID defaults. The pre-dependency
++   ## packages install adduser; wait until after dist-upgrade so --force-confnew
++   ## has finished before setting the defaults required by autologin setup.
++   for adduser_uid_setting in FIRST_UID=1000 LAST_UID=59999; do
++      adduser_uid_key="${adduser_uid_setting%%=*}"
++      adduser_uid_assignment="$(${SUDO_TO_ROOT} sed -n "/^[[:space:]]*${adduser_uid_key}[[:space:]]*=/p" -- "${CHROOT_FOLDER}/etc/adduser.conf")"
++      if [ -n "${adduser_uid_assignment}" ]; then
++         continue
++      fi
++      {
++         printf '%s\n' ""
++         printf '%s\n' "${adduser_uid_setting}"
++      } | ${SUDO_TO_ROOT} tee --append -- "${CHROOT_FOLDER}/etc/adduser.conf" >/dev/null
++   done
++
+    ## Executing pkg-list-install already this this point for the first time to
+    ## make sure linux kernel(s) and linux header(s) as well as
+    ## virtualbox-guest-additions-iso get installed now so it is available

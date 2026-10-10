@@ -34,6 +34,7 @@ entries take precedence over the original-work default above.
 | `patches/adduser-uid-defaults.patch` | `AGPL-3.0-or-later` | Changes to derivative-maker, including upstream context |
 | `patches/bootstrap-helper-scripts.patch` | `AGPL-3.0-or-later` | Changes to derivative-maker, including upstream context |
 | `patches/dependency-error-nounset.patch` | `AGPL-3.0-or-later` | Changes to derivative-maker, including upstream context |
+| `review/derivative-maker.patch` | `AGPL-3.0-or-later` | Combined representation of the three derivative-maker patches above |
 | `patches/grml-no-reimage.patch` | `GPL-2.0-or-later` | grml-debootstrap backport and adaptation |
 | `tests/test_prepare_utm.py` | `AGPL-3.0-or-later` | Adapted libvirt-dist UTM configuration fixtures; this mapping conservatively covers the entire file |
 | Other original project files | `GPL-3.0-or-later` | Original project work as described above |
@@ -45,7 +46,8 @@ their own Free Software Foundation copyright and verbatim-copy notices.
 
 ## derivative-maker patches
 
-The three AGPL patch files modify `build-steps.d/3500_install-packages` from
+The three original AGPL patch files and their combined review diff modify
+`build-steps.d/3500_install-packages` from
 [Whonix/derivative-maker at `945b966e5fbc3b4ca58cc0eece7b91211190c6a4`](https://github.com/Whonix/derivative-maker/tree/945b966e5fbc3b4ca58cc0eece7b91211190c6a4).
 The applicable stanza from that revision's
 [COPYING](https://github.com/Whonix/derivative-maker/blob/945b966e5fbc3b4ca58cc0eece7b91211190c6a4/COPYING)

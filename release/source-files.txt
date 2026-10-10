@@ -38,6 +38,8 @@ release/NOTES-v0.1.0-alpha.1.md
 release/source-files.txt
 research/apple-silicon-performance.md
 research/pixman-benchmark.md
+review/README.md
+review/derivative-maker.patch
 scripts/80-arm64-local-packages
 scripts/90-arm64-torbrowser-alpha
 scripts/95-arm64-kloak-syscalls

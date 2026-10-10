@@ -1,2 +1,3 @@
 # Unified patches contain significant context-prefix spaces on blank lines.
 patches/*.patch -whitespace
+review/*.patch -whitespace
