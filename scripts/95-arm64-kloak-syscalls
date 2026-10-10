@@ -1,0 +1,72 @@
+#!/bin/bash
+# grml-debootstrap host post-script; copy to /etc/debootstrap/post-scripts/.
+# Preserve kloak's upstream sandbox while allowing equivalent ARM64 syscalls.
+set -o errexit
+set -o nounset
+set -o pipefail
+
+temporary=''
+
+fail() {
+    printf 'ARM64 kloak syscall hook: %s\n' "$*" >&2
+    exit 1
+}
+
+cleanup() {
+    if [[ -n "${temporary}" ]]; then
+        rm --force -- "${temporary}"
+    fi
+}
+
+install_drop_in() {
+    local relative_dir config_dir config_file
+    config_dir="${MNTPOINT}/etc/systemd/system/kloak.service.d"
+    config_file="${config_dir}/50-arm64-syscalls.conf"
+    for relative_dir in etc etc/systemd etc/systemd/system etc/systemd/system/kloak.service.d; do
+        [[ ! -L "${MNTPOINT}/${relative_dir}" &&
+           ( ! -e "${MNTPOINT}/${relative_dir}" || -d "${MNTPOINT}/${relative_dir}" ) ]] ||
+            fail "configuration path must not contain symlinks or non-directories"
+    done
+    [[ ! -L "${config_file}" && ( ! -e "${config_file}" || -f "${config_file}" ) ]] ||
+        fail "refusing to replace a non-regular configuration file"
+
+    umask 022
+    mkdir --parents -- "${config_dir}"
+    temporary="$(mktemp "${config_dir}/.50_arm64_syscalls.XXXXXX")"
+    trap cleanup EXIT
+    cat > "${temporary}" <<'EOF'
+[Service]
+# ARM64 equivalents of upstream access, poll, epoll_wait, and unlink.
+# Add to the existing allowlist; retain the upstream sandbox and syscall filter.
+SystemCallFilter=faccessat ppoll epoll_pwait unlinkat
+EOF
+    chmod 0644 -- "${temporary}"
+    mv --force --no-target-directory -- "${temporary}" "${config_file}"
+    temporary=''
+    printf 'Installed additive ARM64 kloak syscall filter: %s\n' "${config_file}"
+}
+
+main() {
+    if [[ "${dist_build_target_arch:-}" != arm64 ||
+          "${dist_build_flavor:-}" != whonix-workstation-lxqt ]]; then
+        return 0
+    fi
+
+    [[ "$(id -u)" == 0 ]] || fail "must run as root"
+    [[ "${MNTPOINT:-}" =~ ^/mnt/derivative-maker-grml-debootstrap\.[0-9]+$ ]] ||
+        fail "unexpected MNTPOINT"
+    [[ -d "${MNTPOINT}" && ! -L "${MNTPOINT}" ]] ||
+        fail "MNTPOINT must be a real directory"
+    [[ "$(readlink -f -- "${MNTPOINT}")" == "${MNTPOINT}" ]] ||
+        fail "MNTPOINT must not contain symlink components"
+    mountpoint --quiet -- "${MNTPOINT}" || fail "MNTPOINT is not mounted"
+    [[ -d "${MNTPOINT}/etc" && ! -L "${MNTPOINT}/etc" && -w "${MNTPOINT}/etc" ]] ||
+        fail "target etc must be a writable real directory"
+    [[ "$(chroot "${MNTPOINT}" dpkg --print-architecture)" == arm64 ]] ||
+        fail "mounted guest is not ARM64"
+    install_drop_in
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

@@ -1,0 +1,21 @@
+#!/bin/sh
+set -eu
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+key="$root/builder/keys/id_ed25519"
+known_hosts="$root/builder/keys/known_hosts"
+# OpenSSH may ignore a missing -i file and try default personal key files.
+for input in "$key" "$known_hosts"; do
+  if [ ! -f "$input" ] || [ -L "$input" ] || [ ! -s "$input" ]; then
+    printf 'Builder SSH requires a regular, nonempty local file: %s\n' "$input" >&2
+    exit 1
+  fi
+done
+# A dedicated build guest must not inherit personal agents, proxies, forwards,
+# or shared SSH connections from the user's usual SSH configuration.
+exec ssh -F /dev/null \
+  -o IdentityAgent=none -o IdentitiesOnly=yes \
+  -o ForwardAgent=no -o ForwardX11=no -o ClearAllForwardings=yes \
+  -o ControlMaster=no -o ControlPath=none \
+  -o ConnectTimeout=10 -o BatchMode=yes -o StrictHostKeyChecking=yes \
+  -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile="$known_hosts" \
+  -i "$key" -p 22022 user@127.0.0.1 "$@"

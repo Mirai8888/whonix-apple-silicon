@@ -1,0 +1,32 @@
+--- a/build-steps.d/3500_install-packages
++++ b/build-steps.d/3500_install-packages
+@@ -208,6 +208,7 @@
+ 
+ install-packages() {
+    local bootstrap_helper_file
++   local adduser_uid_setting adduser_uid_key adduser_uid_assignment
+ 
+    exception_handler_setup "exception_handler_unchroot_unmount" ERR INT TERM
+ 
+@@ -465,6 +466,21 @@
+       ## This is why we explicitly check for supported build types rather than
+       ## always marking user-sysmaint-split for installation here.
+    fi
++
++   ## get-user-list rejects Debian's commented UID defaults. The pre-dependency
++   ## packages install adduser; wait until after dist-upgrade so --force-confnew
++   ## has finished before setting the defaults required by autologin setup.
++   for adduser_uid_setting in FIRST_UID=1000 LAST_UID=59999; do
++      adduser_uid_key="${adduser_uid_setting%%=*}"
++      adduser_uid_assignment="$(${SUDO_TO_ROOT} sed -n "/^[[:space:]]*${adduser_uid_key}[[:space:]]*=/p" -- "${CHROOT_FOLDER}/etc/adduser.conf")"
++      if [ -n "${adduser_uid_assignment}" ]; then
++         continue
++      fi
++      {
++         printf '%s\n' ""
++         printf '%s\n' "${adduser_uid_setting}"
++      } | ${SUDO_TO_ROOT} tee --append -- "${CHROOT_FOLDER}/etc/adduser.conf" >/dev/null
++   done
+ 
+    ## Executing pkg-list-install already this this point for the first time to
+    ## make sure linux kernel(s) and linux header(s) as well as

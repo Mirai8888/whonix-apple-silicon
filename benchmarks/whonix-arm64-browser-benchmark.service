@@ -1,0 +1,15 @@
+[Unit]
+Description=One-boot local browser benchmark on a disposable Whonix clone
+After=display-manager.service
+FailureAction=poweroff
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -I /var/lib/whonix-arm64-browser-benchmark/guest-browser-benchmark.py
+UMask=0077
+RuntimeMaxSec=330
+TimeoutStopSec=15
+KillMode=control-group
+
+[Install]
+WantedBy=graphical.target

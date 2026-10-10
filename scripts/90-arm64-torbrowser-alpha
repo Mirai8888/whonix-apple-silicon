@@ -1,0 +1,50 @@
+#!/bin/bash
+# grml-debootstrap host post-script; copy to /etc/debootstrap/post-scripts/.
+# Run the Workstation build with --tb closed as well: the package postinst
+# checks its inherited policy, whereas its sandboxed updater reads this file.
+set -euo pipefail
+
+if [[ "${dist_build_target_arch:-}" != arm64 ||
+      "${dist_build_flavor:-}" != whonix-workstation-lxqt ]]; then
+    exit 0
+fi
+
+fail() {
+    printf 'Tor Browser alpha hook: %s\n' "$*" >&2
+    exit 1
+}
+
+[[ "$(id -u)" == 0 ]] || fail "must run as root"
+[[ "${MNTPOINT:-}" =~ ^/mnt/derivative-maker-grml-debootstrap\.[0-9]+$ ]] ||
+    fail "unexpected MNTPOINT"
+[[ -d "$MNTPOINT" && ! -L "$MNTPOINT" ]] ||
+    fail "MNTPOINT must be a real directory"
+[[ "$(readlink -f -- "$MNTPOINT")" == "$MNTPOINT" ]] ||
+    fail "MNTPOINT must not contain symlink components"
+mountpoint -q -- "$MNTPOINT" || fail "MNTPOINT is not mounted"
+[[ -d "$MNTPOINT/etc" && ! -L "$MNTPOINT/etc" && -w "$MNTPOINT/etc" ]] ||
+    fail "target etc must be a writable real directory"
+[[ "$(chroot "$MNTPOINT" dpkg --print-architecture)" == arm64 ]] ||
+    fail "mounted guest is not ARM64"
+
+config_dir="$MNTPOINT/etc/torbrowser.d"
+config_file="$config_dir/90_local_arm64_alpha.conf"
+[[ ! -L "$config_dir" && ( ! -e "$config_dir" || -d "$config_dir" ) ]] ||
+    fail "torbrowser.d must be a real directory"
+[[ ! -L "$config_file" && ( ! -e "$config_file" || -f "$config_file" ) ]] ||
+    fail "refusing to replace a non-regular configuration file"
+umask 022
+mkdir -p -- "$config_dir"
+temporary="$(mktemp "$config_dir/.90_local_arm64_alpha.XXXXXX")"
+trap 'rm -f -- "$temporary"' EXIT
+cat > "$temporary" <<'EOF'
+# Experimental Apple Silicon development image: official Tor Browser alpha.
+# Keep the downloader's upstream signature and freshness verification enabled.
+if [ "$(dpkg --print-architecture)" = arm64 ]; then
+    tbb_download_alpha_version=true
+    anon_shared_inst_tb=closed
+fi
+EOF
+chmod 0644 -- "$temporary"
+mv -f -- "$temporary" "$config_file"
+printf 'Selected official Tor Browser alpha for ARM64 Workstation: %s\n' "$config_file"

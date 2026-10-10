@@ -1,0 +1,1072 @@
+{
+  "schema_version": 1,
+  "experiment": "Native ARM64/HVF versus emulated x86_64/TCG: matched Tor Browser local workload at four vCPUs and 4096 MiB",
+  "host": {
+    "soc": "Apple M5",
+    "physical_cores": 10,
+    "logical_cpus": 10,
+    "memory_gib": 24,
+    "macos": "26.2",
+    "macos_build": "25C56",
+    "load_context": "Active user host; no host-load isolation or cache flush"
+  },
+  "method": {
+    "order_architectures": [
+      "arm64",
+      "x86_64",
+      "x86_64",
+      "arm64"
+    ],
+    "vcpus": 4,
+    "memory_mib": 4096,
+    "launch_order": [
+      "first_after_boot",
+      "warm",
+      "warm",
+      "warm"
+    ],
+    "warmup_seconds": 40,
+    "per_launch_deadline_seconds": 180,
+    "host_deadline_seconds": 1200,
+    "completion_timer": "Linux pidfd/select exit notification with guest monotonic elapsed time",
+    "guest_memory_sample_interval_seconds": 0.25,
+    "host_rss_poll_interval_seconds": 0.5,
+    "qemu_version": "QEMU emulator version 11.1.1",
+    "workload": "Unchanged browser-local.html: synchronous local JS/layout and PNG encoding through the normal Tor Browser wrapper and profile",
+    "fixture_label_note": "The unchanged HTML contains an ARM64 label on both architectures. Guest kernel and firefox.real ELF metadata identify the measured architecture independently of that static label.",
+    "workload_sha256": "6ccecac705a5ade54c609820ac7555f0d18ebfa0c82c4785e475af6f1941ed7a",
+    "storage": "Fresh private APFS raw-disk clone per boot; ordinary writes and flush behavior unchanged",
+    "network": "Single internal socket NIC through the existing Gateway; no external backend, shares, debug ports or host forwards",
+    "qemu_argument_placeholders": {
+      "<QEMU_BIN>": "Local directory containing the tested QEMU binaries",
+      "<QEMU_DATA>": "Local directory containing the ARM UEFI firmware",
+      "<TRIAL_UUID>": "Unique identifier generated for that disposable guest",
+      "<TRIAL_DISK>": "Private raw disk clone created for that trial",
+      "<TRIAL_CONSOLE>": "Private serial log created for that trial"
+    },
+    "source_sha256": {
+      "scripts/guest-architecture-benchmark.py": "95eca0b782a6f80122ef5a6e30e4b0bcbb1416f30194a3ded3af0281920a5992",
+      "scripts/run-architecture-benchmark.py": "459ee871f58f0bb2654194272fdd61e798d34282a54d3fe5c543b920e45f459a",
+      "scripts/guest-browser-benchmark.py": "107a3c854dddd720d922b45f65cbfdbd6b918e955dad205382f202558f22298c",
+      "scripts/run-browser-benchmark.py": "8c0421805df05dcf682a06fa007a13ce89a35d638c7d1b25f4abbca59c8eb18b",
+      "scripts/run-headless-benchmark.py": "f86fc50b98b9905b5538c39619c53bd020c061993ef6308afff9afa3c2da242f",
+      "scripts/measure-host.py": "24744fef1d2d4ffaa25ee0a4438a2c8fffee91eb3015b9e426c51f3797ab81c6",
+      "scripts/prepare_utm.py": "a1eb8b29f6bf11312a3345fbbc8cabea4b2214c766a12545b2733ec222a9c4bf",
+      "benchmarks/browser-local.html": "6ccecac705a5ade54c609820ac7555f0d18ebfa0c82c4785e475af6f1941ed7a",
+      "benchmarks/whonix-architecture-benchmark.service": "976e24a6572b10c60f3b68d8a1003027ad9b52c8a93003ce8bc5e9071fce76ee"
+    },
+    "profile_preconditioning": "Final ABBA comparison. Both imported UTM disks untouched. Each final template derives from its successful smoke disk after four unmeasured browser launches. Only benchmark captures, logs and report were removed and the one-use marker reset. Browser preferences and profiles retained. Host caches not flushed.",
+    "excluded_runs": [
+      "ARM smoke framing failure before timing acceptance",
+      "x86 smoke directory ownership guard failure before launches",
+      "Both successful smoke runs are preconditioning only"
+    ],
+    "smoke_timings_excluded": true,
+    "primary_grouped_warm_statistic": "Median of the two per-boot warm medians; each per-boot median uses its three warm launches. Pooled-six median is secondary descriptive data."
+  },
+  "guests": {
+    "arm64": {
+      "whonix": "18.2.2.7-developers-only",
+      "debian": "13.7",
+      "kernel": "6.12.107+deb13-arm64",
+      "acceleration": "hvf"
+    },
+    "x86_64": {
+      "whonix": "18.2.1.9",
+      "debian": "13.6",
+      "kernel": "6.12.95+deb13-amd64",
+      "acceleration": "tcg,thread=multi"
+    }
+  },
+  "browser_metadata_by_architecture": {
+    "arm64": {
+      "application_ini_sha256": "ea0e426628c8ceb05661b0d2b9db0ffbc153f5048ec626298250c4bc17d1a5a8",
+      "application_version": "153.2.0",
+      "architecture": "aarch64",
+      "build_id": "20260902080000",
+      "channel": "alpha",
+      "executable": "firefox.real",
+      "package_architecture": "linux-aarch64",
+      "platform_build_id": "20260902080000",
+      "platform_ini_sha256": "20f07ba34da333f5d07fb8ca542b9dfddd1a0faae11926e0d0f91ab2ca8c67ad",
+      "tbb_version_json_sha256": "438123ad8365705615a7595f42a09a0d0a05a2b6aa677755ba2cd40c3369d43a",
+      "version": "16.0a11"
+    },
+    "x86_64": {
+      "application_ini_sha256": "ea0e426628c8ceb05661b0d2b9db0ffbc153f5048ec626298250c4bc17d1a5a8",
+      "application_version": "153.2.0",
+      "architecture": "x86_64",
+      "build_id": "20260902080000",
+      "channel": "alpha",
+      "executable": "firefox.real",
+      "package_architecture": "linux-x86_64",
+      "platform_build_id": "20260902080000",
+      "platform_ini_sha256": "20f07ba34da333f5d07fb8ca542b9dfddd1a0faae11926e0d0f91ab2ca8c67ad",
+      "tbb_version_json_sha256": "19995fbecc49dea452519065664a1622039ccc070aed52b2634ceec6bdac66ca",
+      "version": "16.0a11"
+    }
+  },
+  "signed_x86_inputs": {
+    "image": {
+      "image_url": "https://download.whonix.org/libvirt/18.2.1.9/Whonix-LXQt-18.2.1.9.Intel_AMD64.qcow2.libvirt.xz",
+      "bytes": 4345866356,
+      "sha512": "84b30da63af4750159006cdf1b5fbf6ab06c3a7ada697428f3b3b125286d85c33b11ee443464c119824aa7f4316e9a84c4a42eb1a50b5570b4105028099ffbe9",
+      "primary_fingerprint": "916B8D99C38EAF5E8ADC7A2A8D66066A2EEACCDA",
+      "validsig": "[GNUPG:] VALIDSIG 6E979B28A6F37C43BE30AFA1CB8D50BB77BB3C48 2026-07-15 1784091820 0 4 0 1 10 00 916B8D99C38EAF5E8ADC7A2A8D66066A2EEACCDA",
+      "signature_verified": true
+    },
+    "browser": {
+      "archive": "tor-browser-linux-x86_64-16.0a11.tar.xz",
+      "size_bytes": 149179564,
+      "sha256": "4f6ab6f3a20ff4b58e05dab9d35e1c07e20b0f0046c432c85f27d97213391749",
+      "sha256_matches_signed_manifest": true,
+      "primary_fingerprint": "EF6E286DDA85EA2A4BA7DE684E2C6E8793298290",
+      "signing_subkey_fingerprint": "CAAE408AEBE2288E96FC5D5E157432CF78A65729",
+      "guest_and_upstream_key_bytes_equal": true,
+      "guest_key_sha256": "70c36a2d19519a65c5321559acd6958a13f5469a253ba7eb2946d135df48e439",
+      "upstream_key_sha256": "70c36a2d19519a65c5321559acd6958a13f5469a253ba7eb2946d135df48e439",
+      "verified_at_utc": "2026-09-17T16:00:46.545296+00:00",
+      "signed_manifest_signature_valid": true,
+      "signed_manifest_signature_timestamp_utc": "2026-09-02",
+      "archive_signature_valid": true,
+      "archive_signature_timestamp_utc": "2026-09-02"
+    },
+    "verification_scope": "Signature and digest checks recorded during template preparation; no guest images or archives are distributed in this repository."
+  },
+  "validation": {
+    "all_four_trials_exited_zero": true,
+    "all_four_individual_reports_match_aggregate_and_serial": true,
+    "all_nine_method_source_hashes_match_current_files": true,
+    "browser_release_firefox_version_and_build_ids_match_across_architectures": true,
+    "successful_captures_reported": 16,
+    "smoke_content_validation": {
+      "read_only_offline_extraction": true,
+      "inspected_visible_result": "PASS checksum=e5f37d05 cards=4000",
+      "all_eight_sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+      "dimensions": [
+        1366,
+        832
+      ],
+      "scope": "The first PNG from each successful architecture smoke was extracted read-only and matched the reference hash; all eight guest-reported PNG hashes matched. The extracted x86 PNG was visually inspected. Smoke timings are excluded."
+    },
+    "final_content_validation": {
+      "status": "passed",
+      "workload_content_validated": true,
+      "read_only_offline_extraction": true,
+      "extraction_method": "Stopped trial disks attached read-only to the maintenance VM; filesystems mounted with ro,noload.",
+      "reference_png": "benchmarks/browser-workload-reference.png",
+      "reference_png_sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+      "reference_png_bytes": 114091,
+      "reference_png_dimensions": [
+        1366,
+        832
+      ],
+      "all_16_actual_host_sha256_and_sizes_match_guest_reports_and_reference": true,
+      "captures": [
+        {
+          "trial": "01-arm64",
+          "launch": 1,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "01-arm64",
+          "launch": 2,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "01-arm64",
+          "launch": 3,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "01-arm64",
+          "launch": 4,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "02-x86_64",
+          "launch": 1,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "02-x86_64",
+          "launch": 2,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "02-x86_64",
+          "launch": 3,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "02-x86_64",
+          "launch": 4,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "03-x86_64",
+          "launch": 1,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "03-x86_64",
+          "launch": 2,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "03-x86_64",
+          "launch": 3,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "03-x86_64",
+          "launch": 4,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "04-arm64",
+          "launch": 1,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "04-arm64",
+          "launch": 2,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "04-arm64",
+          "launch": 3,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        },
+        {
+          "trial": "04-arm64",
+          "launch": 4,
+          "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+          "bytes": 114091,
+          "read_only_offline_extraction": true
+        }
+      ],
+      "visual_validation": {
+        "status": "passed",
+        "inspected_files": [
+          "01-arm64-launch-01-cold.png",
+          "03-x86_64-launch-01-cold.png"
+        ],
+        "visible_result": "PASS checksum=e5f37d05 cards=4000",
+        "all_16_actual_sha256_match_inspected_images": true
+      },
+      "scope": "All sixteen final PNG files were actually extracted and hashed on the host. One actual final capture per architecture was visually inspected for PASS checksum=e5f37d05 cards=4000; every other extracted PNG is byte-identical to those inspected images. Raw guest report statuses remain captured-unvalidated."
+    }
+  },
+  "trials": [
+    {
+      "trial": "01-arm64",
+      "architecture": "arm64",
+      "vcpus": 4,
+      "memory_mib": 4096,
+      "launch_durations_seconds": [
+        0.7085682079999955,
+        0.3573928329999987,
+        0.3286712920000028,
+        0.3397110000000012
+      ],
+      "first_launch_seconds": 0.7085682079999955,
+      "warm_median_seconds": 0.3397110000000012,
+      "minimum_sampled_guest_mem_available_mib": 3134.5625,
+      "minimum_sampled_guest_mem_available_mib_by_launch": [
+        3185.703125,
+        3134.5625,
+        3159.56640625,
+        3158.1328125
+      ],
+      "guest_counter_samples_by_launch": [
+        5,
+        4,
+        4,
+        4
+      ],
+      "guest_mem_total_kib": 4001536,
+      "guest_swap_total_kib": 0,
+      "guest_counter_delta_sum": {
+        "oom_kill": 0,
+        "pgfault": 295062,
+        "pgmajfault": 982,
+        "pgscan_direct": 0,
+        "pgscan_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_kswapd": 0,
+        "pswpin": 0,
+        "pswpout": 0
+      },
+      "guest_pressure_delta_sum_microseconds": {
+        "cpu": {
+          "full": 0,
+          "some": 90555
+        },
+        "io": {
+          "full": 99127,
+          "some": 110490
+        },
+        "memory": {
+          "full": 0,
+          "some": 0
+        }
+      },
+      "host_process_cpu_percent_one_core": 32.30812252114718,
+      "host_process_sample_interval_seconds": 61.656321833499995,
+      "host_sampled_peak_rss_mib": 1869.0625,
+      "host_wide_io_delta_mib": {
+        "Swapins": 46.703125,
+        "Swapouts": 0.0,
+        "Pageouts": 13.453125
+      },
+      "host_wide_swap_usage_before": "total = 25600.00M  used = 24150.50M  free = 1449.50M  (encrypted)",
+      "host_wide_swap_usage_after": "total = 25600.00M  used = 24134.50M  free = 1465.50M  (encrypted)",
+      "boot_to_report_observed_seconds": 60.642407875,
+      "boot_to_exit_observed_seconds": 62.165146500000006,
+      "timing_crosscheck": {
+        "host_begin_end_receipt_seconds_since_spawn": [
+          [
+            59.119559292000005,
+            59.6298535
+          ],
+          [
+            59.6298535,
+            60.138015417000005
+          ],
+          [
+            60.138015417000005,
+            60.642407875
+          ],
+          [
+            60.642407875,
+            60.642407875
+          ]
+        ],
+        "approximate_host_launch_seconds": [
+          0.5102942079999977,
+          0.5081619170000025,
+          0.5043924579999981,
+          0.0
+        ],
+        "host_minus_guest_seconds_by_launch": [
+          -0.19827399999999784,
+          0.15076908400000377,
+          0.17572116599999532,
+          -0.3397110000000012
+        ],
+        "maximum_absolute_host_guest_difference_seconds": 0.3397110000000012,
+        "maximum_observed_host_poll_gap_seconds": 0.581526542000006,
+        "limits": "Host observations of complete serial lines, including transport and polling delay; not precise launch timing. Sub-poll launches may have identical begin/end receipt times. The observed maximum poll gap is not a formal total timing-error bound."
+      },
+      "reported_capture_sha256_by_launch": [
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e"
+      ],
+      "reported_capture_bytes_by_launch": [
+        114091,
+        114091,
+        114091,
+        114091
+      ],
+      "reported_capture_dimensions_by_launch": [
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ]
+      ],
+      "qemu_arguments": [
+        "<QEMU_BIN>/qemu-system-aarch64",
+        "-name",
+        "Whonix-architecture-01-arm64",
+        "-uuid",
+        "<TRIAL_UUID>",
+        "-machine",
+        "virt,accel=hvf",
+        "-cpu",
+        "host",
+        "-smp",
+        "4",
+        "-m",
+        "4096",
+        "-bios",
+        "<QEMU_DATA>/edk2-aarch64-code.fd",
+        "-nodefaults",
+        "-display",
+        "none",
+        "-vga",
+        "none",
+        "-nic",
+        "none",
+        "-device",
+        "ramfb",
+        "-device",
+        "virtio-gpu-pci",
+        "-device",
+        "nec-usb-xhci,id=usb-bus",
+        "-device",
+        "usb-tablet,bus=usb-bus.0",
+        "-device",
+        "usb-mouse,bus=usb-bus.0",
+        "-device",
+        "usb-kbd,bus=usb-bus.0",
+        "-drive",
+        "if=none,id=drive0,format=raw,file=<TRIAL_DISK>,discard=ignore,detect-zeroes=off",
+        "-device",
+        "virtio-blk-pci,drive=drive0,serial=0,bootindex=0",
+        "-netdev",
+        "socket,id=internal,connect=127.0.0.1:8010",
+        "-device",
+        "virtio-net-pci,netdev=internal",
+        "-device",
+        "virtio-rng-pci",
+        "-serial",
+        "file:<TRIAL_CONSOLE>"
+      ]
+    },
+    {
+      "trial": "02-x86_64",
+      "architecture": "x86_64",
+      "vcpus": 4,
+      "memory_mib": 4096,
+      "launch_durations_seconds": [
+        15.331221450000001,
+        10.550024262999997,
+        12.812374331000001,
+        12.916804165999991
+      ],
+      "first_launch_seconds": 15.331221450000001,
+      "warm_median_seconds": 12.812374331000001,
+      "minimum_sampled_guest_mem_available_mib": 2991.515625,
+      "minimum_sampled_guest_mem_available_mib_by_launch": [
+        3033.765625,
+        3031.890625,
+        3026.6953125,
+        2991.515625
+      ],
+      "guest_counter_samples_by_launch": [
+        61,
+        43,
+        51,
+        52
+      ],
+      "guest_mem_total_kib": 4011044,
+      "guest_swap_total_kib": 0,
+      "guest_counter_delta_sum": {
+        "oom_kill": 0,
+        "pgfault": 276386,
+        "pgmajfault": 1042,
+        "pgscan_direct": 0,
+        "pgscan_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_kswapd": 0,
+        "pswpin": 0,
+        "pswpout": 0
+      },
+      "guest_pressure_delta_sum_microseconds": {
+        "cpu": {
+          "full": 0,
+          "some": 2099937
+        },
+        "io": {
+          "full": 180319,
+          "some": 199829
+        },
+        "memory": {
+          "full": 0,
+          "some": 0
+        }
+      },
+      "host_process_cpu_percent_one_core": 199.4896595891838,
+      "host_process_sample_interval_seconds": 164.965943938,
+      "host_sampled_peak_rss_mib": 1566.484375,
+      "host_wide_io_delta_mib": {
+        "Swapins": 93.171875,
+        "Swapouts": 354.5,
+        "Pageouts": 119.578125
+      },
+      "host_wide_swap_usage_before": "total = 25600.00M  used = 24134.50M  free = 1465.50M  (encrypted)",
+      "host_wide_swap_usage_after": "total = 25600.00M  used = 24369.00M  free = 1231.00M  (encrypted)",
+      "boot_to_report_observed_seconds": 159.377104,
+      "boot_to_exit_observed_seconds": 165.474659166,
+      "timing_crosscheck": {
+        "host_begin_end_receipt_seconds_since_spawn": [
+          [
+            107.54130629099998,
+            122.75479158299999
+          ],
+          [
+            122.75479158299999,
+            133.383068833
+          ],
+          [
+            133.383068833,
+            146.190179791
+          ],
+          [
+            146.190179791,
+            159.377104
+          ]
+        ],
+        "approximate_host_launch_seconds": [
+          15.213485292000001,
+          10.628277250000025,
+          12.807110957999981,
+          13.186924209000011
+        ],
+        "host_minus_guest_seconds_by_launch": [
+          -0.11773615799999959,
+          0.07825298700002747,
+          -0.0052633730000195555,
+          0.2701200430000199
+        ],
+        "maximum_absolute_host_guest_difference_seconds": 0.2701200430000199,
+        "maximum_observed_host_poll_gap_seconds": 0.5790763749999996,
+        "limits": "Host observations of complete serial lines, including transport and polling delay; not precise launch timing. Sub-poll launches may have identical begin/end receipt times. The observed maximum poll gap is not a formal total timing-error bound."
+      },
+      "reported_capture_sha256_by_launch": [
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e"
+      ],
+      "reported_capture_bytes_by_launch": [
+        114091,
+        114091,
+        114091,
+        114091
+      ],
+      "reported_capture_dimensions_by_launch": [
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ]
+      ],
+      "qemu_arguments": [
+        "<QEMU_BIN>/qemu-system-x86_64",
+        "-name",
+        "Whonix-architecture-02-x86_64",
+        "-uuid",
+        "<TRIAL_UUID>",
+        "-machine",
+        "pc-q35-11.1",
+        "-accel",
+        "tcg,thread=multi",
+        "-cpu",
+        "max",
+        "-smp",
+        "4",
+        "-m",
+        "4096",
+        "-nodefaults",
+        "-display",
+        "none",
+        "-vga",
+        "none",
+        "-nic",
+        "none",
+        "-device",
+        "virtio-vga",
+        "-device",
+        "nec-usb-xhci,id=usb-bus",
+        "-device",
+        "usb-tablet,bus=usb-bus.0",
+        "-device",
+        "usb-mouse,bus=usb-bus.0",
+        "-device",
+        "usb-kbd,bus=usb-bus.0",
+        "-drive",
+        "if=none,id=drive0,format=raw,file=<TRIAL_DISK>,discard=ignore,detect-zeroes=off",
+        "-device",
+        "virtio-blk-pci,drive=drive0,serial=0,bootindex=0",
+        "-netdev",
+        "socket,id=internal,connect=127.0.0.1:8010",
+        "-device",
+        "virtio-net-pci,netdev=internal",
+        "-device",
+        "virtio-rng-pci",
+        "-serial",
+        "file:<TRIAL_CONSOLE>"
+      ]
+    },
+    {
+      "trial": "03-x86_64",
+      "architecture": "x86_64",
+      "vcpus": 4,
+      "memory_mib": 4096,
+      "launch_durations_seconds": [
+        11.901571238000002,
+        9.669043188999993,
+        9.4000341,
+        9.570763791000005
+      ],
+      "first_launch_seconds": 11.901571238000002,
+      "warm_median_seconds": 9.570763791000005,
+      "minimum_sampled_guest_mem_available_mib": 2985.109375,
+      "minimum_sampled_guest_mem_available_mib_by_launch": [
+        3004.74609375,
+        2985.109375,
+        3011.09765625,
+        2990.05859375
+      ],
+      "guest_counter_samples_by_launch": [
+        49,
+        40,
+        39,
+        40
+      ],
+      "guest_mem_total_kib": 4011044,
+      "guest_swap_total_kib": 0,
+      "guest_counter_delta_sum": {
+        "oom_kill": 0,
+        "pgfault": 283762,
+        "pgmajfault": 1041,
+        "pgscan_direct": 0,
+        "pgscan_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_kswapd": 0,
+        "pswpin": 0,
+        "pswpout": 0
+      },
+      "guest_pressure_delta_sum_microseconds": {
+        "cpu": {
+          "full": 0,
+          "some": 1773170
+        },
+        "io": {
+          "full": 159700,
+          "some": 175079
+        },
+        "memory": {
+          "full": 0,
+          "some": 0
+        }
+      },
+      "host_process_cpu_percent_one_core": 203.29415537097591,
+      "host_process_sample_interval_seconds": 152.69007583300004,
+      "host_sampled_peak_rss_mib": 1614.53125,
+      "host_wide_io_delta_mib": {
+        "Swapins": 62.046875,
+        "Swapouts": 0.0,
+        "Pageouts": 21.125
+      },
+      "host_wide_swap_usage_before": "total = 25600.00M  used = 24369.00M  free = 1231.00M  (encrypted)",
+      "host_wide_swap_usage_after": "total = 25600.00M  used = 24313.00M  free = 1287.00M  (encrypted)",
+      "boot_to_report_observed_seconds": 147.613800583,
+      "boot_to_exit_observed_seconds": 153.19596704100002,
+      "timing_crosscheck": {
+        "host_begin_end_receipt_seconds_since_spawn": [
+          [
+            107.06242850000001,
+            118.70537020800003
+          ],
+          [
+            118.70537020800003,
+            128.34157583300004
+          ],
+          [
+            128.34157583300004,
+            137.97823158300002
+          ],
+          [
+            137.97823158300002,
+            147.613800583
+          ]
+        ],
+        "approximate_host_launch_seconds": [
+          11.642941708000023,
+          9.636205625000002,
+          9.636655749999989,
+          9.635568999999975
+        ],
+        "host_minus_guest_seconds_by_launch": [
+          -0.258629529999979,
+          -0.03283756399999049,
+          0.23662164999998936,
+          0.06480520899997089
+        ],
+        "maximum_absolute_host_guest_difference_seconds": 0.258629529999979,
+        "maximum_observed_host_poll_gap_seconds": 0.529852333000008,
+        "limits": "Host observations of complete serial lines, including transport and polling delay; not precise launch timing. Sub-poll launches may have identical begin/end receipt times. The observed maximum poll gap is not a formal total timing-error bound."
+      },
+      "reported_capture_sha256_by_launch": [
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e"
+      ],
+      "reported_capture_bytes_by_launch": [
+        114091,
+        114091,
+        114091,
+        114091
+      ],
+      "reported_capture_dimensions_by_launch": [
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ]
+      ],
+      "qemu_arguments": [
+        "<QEMU_BIN>/qemu-system-x86_64",
+        "-name",
+        "Whonix-architecture-03-x86_64",
+        "-uuid",
+        "<TRIAL_UUID>",
+        "-machine",
+        "pc-q35-11.1",
+        "-accel",
+        "tcg,thread=multi",
+        "-cpu",
+        "max",
+        "-smp",
+        "4",
+        "-m",
+        "4096",
+        "-nodefaults",
+        "-display",
+        "none",
+        "-vga",
+        "none",
+        "-nic",
+        "none",
+        "-device",
+        "virtio-vga",
+        "-device",
+        "nec-usb-xhci,id=usb-bus",
+        "-device",
+        "usb-tablet,bus=usb-bus.0",
+        "-device",
+        "usb-mouse,bus=usb-bus.0",
+        "-device",
+        "usb-kbd,bus=usb-bus.0",
+        "-drive",
+        "if=none,id=drive0,format=raw,file=<TRIAL_DISK>,discard=ignore,detect-zeroes=off",
+        "-device",
+        "virtio-blk-pci,drive=drive0,serial=0,bootindex=0",
+        "-netdev",
+        "socket,id=internal,connect=127.0.0.1:8010",
+        "-device",
+        "virtio-net-pci,netdev=internal",
+        "-device",
+        "virtio-rng-pci",
+        "-serial",
+        "file:<TRIAL_CONSOLE>"
+      ]
+    },
+    {
+      "trial": "04-arm64",
+      "architecture": "arm64",
+      "vcpus": 4,
+      "memory_mib": 4096,
+      "launch_durations_seconds": [
+        0.5765851250000011,
+        0.32590937500000194,
+        0.3289505000000048,
+        0.3250014159999992
+      ],
+      "first_launch_seconds": 0.5765851250000011,
+      "warm_median_seconds": 0.32590937500000194,
+      "minimum_sampled_guest_mem_available_mib": 3148.9921875,
+      "minimum_sampled_guest_mem_available_mib_by_launch": [
+        3151.5390625,
+        3148.9921875,
+        3150.51953125,
+        3168.984375
+      ],
+      "guest_counter_samples_by_launch": [
+        5,
+        4,
+        4,
+        4
+      ],
+      "guest_mem_total_kib": 4001532,
+      "guest_swap_total_kib": 0,
+      "guest_counter_delta_sum": {
+        "oom_kill": 0,
+        "pgfault": 297013,
+        "pgmajfault": 982,
+        "pgscan_direct": 0,
+        "pgscan_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_kswapd": 0,
+        "pswpin": 0,
+        "pswpout": 0
+      },
+      "guest_pressure_delta_sum_microseconds": {
+        "cpu": {
+          "full": 0,
+          "some": 72352
+        },
+        "io": {
+          "full": 66985,
+          "some": 71335
+        },
+        "memory": {
+          "full": 0,
+          "some": 0
+        }
+      },
+      "host_process_cpu_percent_one_core": 33.707316226746684,
+      "host_process_sample_interval_seconds": 61.3219986455,
+      "host_sampled_peak_rss_mib": 1790.1875,
+      "host_wide_io_delta_mib": {
+        "Swapins": 55.0,
+        "Swapouts": 0.0,
+        "Pageouts": 44.609375
+      },
+      "host_wide_swap_usage_before": "total = 25600.00M  used = 24313.00M  free = 1287.00M  (encrypted)",
+      "host_wide_swap_usage_after": "total = 25600.00M  used = 24257.00M  free = 1343.00M  (encrypted)",
+      "boot_to_report_observed_seconds": 60.81445387500003,
+      "boot_to_exit_observed_seconds": 61.83210295800001,
+      "timing_crosscheck": {
+        "host_begin_end_receipt_seconds_since_spawn": [
+          [
+            59.297148042,
+            59.802320667000004
+          ],
+          [
+            59.802320667000004,
+            60.31056124999998
+          ],
+          [
+            60.31056124999998,
+            60.31056124999998
+          ],
+          [
+            60.31056124999998,
+            60.81445387500003
+          ]
+        ],
+        "approximate_host_launch_seconds": [
+          0.5051726250000002,
+          0.5082405829999743,
+          0.0,
+          0.5038926250000486
+        ],
+        "host_minus_guest_seconds_by_launch": [
+          -0.07141250000000099,
+          0.18233120799997238,
+          -0.3289505000000048,
+          0.1788912090000494
+        ],
+        "maximum_absolute_host_guest_difference_seconds": 0.3289505000000048,
+        "maximum_observed_host_poll_gap_seconds": 0.5736804580000125,
+        "limits": "Host observations of complete serial lines, including transport and polling delay; not precise launch timing. Sub-poll launches may have identical begin/end receipt times. The observed maximum poll gap is not a formal total timing-error bound."
+      },
+      "reported_capture_sha256_by_launch": [
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+        "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e"
+      ],
+      "reported_capture_bytes_by_launch": [
+        114091,
+        114091,
+        114091,
+        114091
+      ],
+      "reported_capture_dimensions_by_launch": [
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ],
+        [
+          1366,
+          832
+        ]
+      ],
+      "qemu_arguments": [
+        "<QEMU_BIN>/qemu-system-aarch64",
+        "-name",
+        "Whonix-architecture-04-arm64",
+        "-uuid",
+        "<TRIAL_UUID>",
+        "-machine",
+        "virt,accel=hvf",
+        "-cpu",
+        "host",
+        "-smp",
+        "4",
+        "-m",
+        "4096",
+        "-bios",
+        "<QEMU_DATA>/edk2-aarch64-code.fd",
+        "-nodefaults",
+        "-display",
+        "none",
+        "-vga",
+        "none",
+        "-nic",
+        "none",
+        "-device",
+        "ramfb",
+        "-device",
+        "virtio-gpu-pci",
+        "-device",
+        "nec-usb-xhci,id=usb-bus",
+        "-device",
+        "usb-tablet,bus=usb-bus.0",
+        "-device",
+        "usb-mouse,bus=usb-bus.0",
+        "-device",
+        "usb-kbd,bus=usb-bus.0",
+        "-drive",
+        "if=none,id=drive0,format=raw,file=<TRIAL_DISK>,discard=ignore,detect-zeroes=off",
+        "-device",
+        "virtio-blk-pci,drive=drive0,serial=0,bootindex=0",
+        "-netdev",
+        "socket,id=internal,connect=127.0.0.1:8010",
+        "-device",
+        "virtio-net-pci,netdev=internal",
+        "-device",
+        "virtio-rng-pci",
+        "-serial",
+        "file:<TRIAL_CONSOLE>"
+      ]
+    }
+  ],
+  "aggregates_by_architecture": {
+    "arm64": {
+      "boots": 2,
+      "first_launch_samples": 2,
+      "warm_samples": 6,
+      "first_launches_seconds": [
+        0.7085682079999955,
+        0.5765851250000011
+      ],
+      "first_launch_median_seconds": 0.6425766664999983,
+      "per_boot_warm_medians_seconds": [
+        0.3397110000000012,
+        0.32590937500000194
+      ],
+      "median_of_boot_warm_medians_seconds": 0.3328101875000016,
+      "pooled_warm_median_seconds": 0.3288108960000038,
+      "minimum_sampled_guest_mem_available_mib": 3134.5625,
+      "host_process_cpu_median_percent_one_core": 33.007719373946934,
+      "boot_to_report_median_observed_seconds": 60.728430875000015
+    },
+    "x86_64": {
+      "boots": 2,
+      "first_launch_samples": 2,
+      "warm_samples": 6,
+      "first_launches_seconds": [
+        15.331221450000001,
+        11.901571238000002
+      ],
+      "first_launch_median_seconds": 13.616396344000002,
+      "per_boot_warm_medians_seconds": [
+        12.812374331000001,
+        9.570763791000005
+      ],
+      "median_of_boot_warm_medians_seconds": 11.191569061000003,
+      "pooled_warm_median_seconds": 10.109533725999995,
+      "minimum_sampled_guest_mem_available_mib": 2985.109375,
+      "host_process_cpu_median_percent_one_core": 201.39190748007985,
+      "boot_to_report_median_observed_seconds": 153.4954522915
+    }
+  },
+  "descriptive_elapsed_time_comparison": {
+    "first_launch_median_seconds": {
+      "x86_tcg_divided_by_arm_hvf": 21.19030623717806,
+      "arm_hvf_elapsed_time_reduction_percent_relative_to_x86_tcg": 95.2808610276452
+    },
+    "median_of_boot_warm_medians_seconds": {
+      "x86_tcg_divided_by_arm_hvf": 33.62748341650434,
+      "arm_hvf_elapsed_time_reduction_percent_relative_to_x86_tcg": 97.02624193546045
+    },
+    "pooled_warm_median_seconds": {
+      "x86_tcg_divided_by_arm_hvf": 30.745738200840762,
+      "arm_hvf_elapsed_time_reduction_percent_relative_to_x86_tcg": 96.74751670144431
+    }
+  },
+  "limits": [
+    "Only two ordered boots per architecture on an active host; no confidence interval or statistical significance claim. Ratios describe this workload and these guest/backend combinations only.",
+    "ARM Whonix 18.2.2.7-developers-only / Debian 13.7 / Linux 6.12.107 differs from x86 Whonix 18.2.1.9 / Debian 13.6 / Linux 6.12.95. Matching Tor Browser and Firefox build IDs does not remove guest library, kernel, profile or graphics-device differences.",
+    "The comparison combines ISA, HVF versus TCG, emulated devices and guest-build differences. It cannot isolate ISA efficiency or quantify virtualization overhead alone.",
+    "First launch means first browser launch after a fresh guest boot, using a smoke-preconditioned profile. It is not a fresh browser installation. Host APFS caches were not flushed.",
+    "The workload measures headless startup, local JS/layout and PNG encoding, not UTM GUI responsiveness, desktop frame rate, Tor throughput or native macOS application parity.",
+    "Guest monotonic durations are primary. Host serial begin/end observations include transport and polling delay; short ARM launches may produce identical receipt timestamps. Maximum observed polling gap is not a formal total timing-error bound.",
+    "Host CPU spans sampled boot, settling and benchmark time. Host RSS is sampled, not an exact peak or guest RAM demand.",
+    "Host swap/page counters include other applications and cannot be attributed to the benchmark guest.",
+    "Guest memory samples every 0.25 seconds may miss shorter peaks. This small workload does not establish memory requirements for sustained browsing.",
+    "Zero guest swap counters do not demonstrate swap-backed safety when SwapTotal is zero.",
+    "Content validation is separate from timing/report acceptance: all sixteen final PNGs were extracted read-only and hashed; one image per architecture was visually inspected, and every other extracted image was byte-identical. Raw guest reports retain captured-unvalidated status."
+  ]
+}

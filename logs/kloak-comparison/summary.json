@@ -1,0 +1,86 @@
+{
+  "trial_count": 4,
+  "host_cpu_percent_one_core": {
+    "control": 3.789070466665973,
+    "fixed": 1.0572186806484931
+  },
+  "observed_host_idle_cpu_reduction_percent": 72.09820482492249,
+  "guest_busy_percent_four_vcpus": {
+    "control": 0.9016640853528533,
+    "fixed": 0.21245921838123005
+  },
+  "trials": [
+    {
+      "trial": "01-control",
+      "host_cpu_percent_one_core": 4.414199542953361,
+      "guest_busy_percent": 1.0453106779943362,
+      "restart_delta": 11,
+      "host_interval_seconds": 60.03353437499999,
+      "max_poll_gap_seconds": 0.2675667920000109,
+      "end_sample_latency_seconds": 0.004904332999998928,
+      "swapin_mib": 48.90625,
+      "swapout_mib": 0.0
+    },
+    {
+      "trial": "02-fixed",
+      "host_cpu_percent_one_core": 1.2475880043224017,
+      "guest_busy_percent": 0.22916666666666666,
+      "restart_delta": 0,
+      "host_interval_seconds": 60.115999625,
+      "max_poll_gap_seconds": 0.26295650000000137,
+      "end_sample_latency_seconds": 0.011649042000016152,
+      "swapin_mib": 130.59375,
+      "swapout_mib": 0.0
+    },
+    {
+      "trial": "03-fixed",
+      "host_cpu_percent_one_core": 0.8668493569745845,
+      "guest_busy_percent": 0.19575177009579342,
+      "restart_delta": 0,
+      "host_interval_seconds": 59.987354874999994,
+      "max_poll_gap_seconds": 0.2753988750000076,
+      "end_sample_latency_seconds": 0.043311000000016975,
+      "swapin_mib": 67.046875,
+      "swapout_mib": 0.0
+    },
+    {
+      "trial": "04-control",
+      "host_cpu_percent_one_core": 3.163941390378585,
+      "guest_busy_percent": 0.7580174927113703,
+      "restart_delta": 11,
+      "host_interval_seconds": 60.05168129150002,
+      "max_poll_gap_seconds": 0.26023524999993697,
+      "end_sample_latency_seconds": 0.007386500000052365,
+      "swapin_mib": 95.859375,
+      "swapout_mib": 590.625
+    }
+  ],
+  "crypto": {
+    "aes-256-gcm": {
+      "median_bytes_per_second": {
+        "auto": 5806448640.0,
+        "armcap-disabled": 165733000.87
+      },
+      "ratio": 35.03495748897073,
+      "samples_per_mode": 6
+    },
+    "sha256": {
+      "median_bytes_per_second": {
+        "auto": 2082152123.565,
+        "armcap-disabled": 389726208.0
+      },
+      "ratio": 5.342602270065964,
+      "samples_per_mode": 6
+    }
+  },
+  "pixman": {
+    "median_pixels_per_second": {
+      "auto": 1586190113.166,
+      "neon-disabled": 216617828.232
+    },
+    "ratio": 7.322528002945231,
+    "samples_per_mode": 6,
+    "checksum": "457c95b0871b8af3"
+  },
+  "limits": "Short headless synthetic/idle tests on a busy host; not UTM GUI responsiveness, Tor throughput, GPU acceleration, or native-speed parity. Accelerated paths were already enabled. Preliminary unguarded trials excluded."
+}

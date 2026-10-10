@@ -1,0 +1,11 @@
+--- a/build-steps.d/3500_install-packages
++++ b/build-steps.d/3500_install-packages
+@@ -52,7 +52,7 @@
+          continue
+       else
+          ## match
+-         if [ "${remember_pkg[${unmet_dependency}]}" = "true" ]; then
++         if [ "${remember_pkg[${unmet_dependency}]:-}" = "true" ]; then
+             continue
+          fi
+          printf "%s\n" "${bold}${cyan}INFO: Found unmet dependency: ${unmet_dependency}. \

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>Whonix ARM64 local browser benchmark</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: #172339; color: #edf3ff; font: 16px sans-serif; }
+header { height: 132px; padding: 20px 28px; background: #203653; }
+h1 { margin: 0 0 12px; font-size: 24px; }
+#result { font: bold 20px monospace; color: #ffbd75; }
+#grid { height: 700px; overflow: hidden; padding: 16px; display: grid;
+        grid-template-columns: repeat(5, 1fr); gap: 8px; align-content: start; }
+article { min-height: 112px; padding: 12px; border: 1px solid #506587;
+          border-radius: 5px; background: #223551; }
+article b, article span { display: block; margin-bottom: 5px; }
+article span { color: #bdd1ee; font-size: 13px; }
+</style>
+<header><h1>Whonix ARM64: local browser workload</h1>
+<div id="result">FAIL — workload has not completed</div></header>
+<main id="grid"></main>
+<script>
+"use strict";
+// Every operation completes synchronously before the load event. There are no
+// network resources, workers, animation clocks, persistent writes or timers.
+let state = 0x6d2b79f5;
+const values = [];
+for (let i = 0; i < 32768; i++) {
+  state ^= state << 13; state ^= state >>> 17; state ^= state << 5;
+  values.push(state >>> 0);
+}
+let hash = 2166136261;
+for (let round = 0; round < 16; round++) {
+  const ordered = values.slice().sort((a, b) => a - b);
+  for (const value of ordered) hash = Math.imul(hash ^ value, 16777619) >>> 0;
+}
+const fragment = document.createDocumentFragment();
+for (let i = 0; i < 4000; i++) {
+  const item = document.createElement("article");
+  for (const [tag, text] of [
+    ["b", "Local record " + String(i + 1).padStart(4, "0")],
+    ["span", "Value " + values[i]],
+    ["span", "Group " + (values[i] % 97)],
+    ["span", "ARM64 deterministic layout"]
+  ]) {
+    const child = document.createElement(tag); child.textContent = text;
+    item.appendChild(child);
+  }
+  fragment.appendChild(item);
+}
+const grid = document.getElementById("grid");
+grid.appendChild(fragment);
+const finalRect = grid.lastElementChild.getBoundingClientRect();
+const checksum = hash.toString(16).padStart(8, "0");
+const passed = checksum === "e5f37d05" && grid.children.length === 4000 && finalRect.width > 0;
+const result = document.getElementById("result");
+result.textContent = (passed ? "PASS" : "FAIL") + " checksum=" + checksum + " cards=" + grid.children.length;
+result.style.color = passed ? "#83f5bd" : "#ff7777";
+document.title = result.textContent;
+</script>
+</html>

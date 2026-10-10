@@ -1,0 +1,30 @@
+{
+  "recorded_utc": "2026-09-17T14:16:33.501722+00:00",
+  "order": [
+    "control",
+    "fixed",
+    "fixed",
+    "control"
+  ],
+  "warmup_seconds": 40,
+  "idle_seconds": 60,
+  "post_end_idle_guard_seconds": 5,
+  "host_poll_interval_seconds": 0.25,
+  "required_max_poll_gap_seconds": 2,
+  "required_max_end_sample_latency_seconds": 2,
+  "required_host_interval_seconds": [
+    59,
+    61
+  ],
+  "guest_cpu_count": 4,
+  "guest_memory_mib": 4096,
+  "host_model": "Apple M5",
+  "source_sha256": {
+    "scripts/run-headless-benchmark.py": "4218c52586c43da6022a4f45204a947ccce94774b813119e99670618ace9aecb",
+    "scripts/guest-idle-benchmark.py": "a6da044cc93afec6fd89752b3b187a1a1b5ec088ca57527fee302b8df1041754",
+    "scripts/benchmark-arm64-crypto.py": "3177246faf26123971d766acf795c13e38872e6628b0eae1796a7b7a953d2ce3",
+    "scripts/pixman-composite-benchmark.c": "50b87a6595d78b10accf75e42cdd1ed28c52c2bec088279013a78cf9cec96d74",
+    "artifacts/local-benchmarks/pixman-composite-benchmark": "e0cdd0c6a193dafaf070e580ef6bbb0cb4ec5b1ba4a5753287c9d770af13eef2"
+  },
+  "notes": "Disposable APFS clones only. Original repaired UTM disk untouched. Preliminary unguarded run is retained separately and is not used for final host-idle statistics."
+}

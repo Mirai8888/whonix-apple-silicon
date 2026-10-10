@@ -1,0 +1,113 @@
+#!/bin/bash
+# grml-debootstrap host post-script; copy to /etc/debootstrap/post-scripts/.
+# Stage verified local ARM64 packages for install_package_list.
+set -o errexit
+set -o nounset
+set -o pipefail
+
+temporary=''
+
+fail() {
+    printf 'Local ARM64 packages hook: %s\n' "$*" >&2
+    exit 1
+}
+
+cleanup() {
+    if [[ -n "${temporary}" ]]; then
+        rm --force -- "${temporary}"
+    fi
+}
+
+verify_package() {
+    local package_file package_sha256 package_name package_version actual_sha256
+    package_file="$1"
+    package_sha256="$2"
+    package_name="$3"
+    package_version="$4"
+    actual_sha256="$(sha256sum -- "${package_file}")"
+    [[ "${actual_sha256%% *}" == "${package_sha256}" ]] ||
+        fail "package SHA256 does not match the verified local build"
+    [[ "$(dpkg-deb --field "${package_file}" Package)" == "${package_name}" ]] ||
+        fail "unexpected package name"
+    [[ "$(dpkg-deb --field "${package_file}" Version)" == "${package_version}" ]] ||
+        fail "unexpected package version"
+    [[ "$(dpkg-deb --field "${package_file}" Architecture)" == arm64 ]] ||
+        fail "package is not ARM64"
+}
+
+stage_package() {
+    local relative_dir target_dir target_file
+    local package_filename package_sha256 package_name package_version package_source
+    package_filename="$1"
+    package_sha256="$2"
+    package_name="$3"
+    package_version="$4"
+    package_source="/home/user/arm64-local-build/${package_filename}"
+    target_dir="${MNTPOINT}/var/lib/derivative-maker/local-packages"
+    target_file="${target_dir}/${package_filename}"
+    for relative_dir in var var/lib var/lib/derivative-maker var/lib/derivative-maker/local-packages; do
+        [[ ! -L "${MNTPOINT}/${relative_dir}" &&
+           ( ! -e "${MNTPOINT}/${relative_dir}" || -d "${MNTPOINT}/${relative_dir}" ) ]] ||
+            fail "target package directory must not contain symlinks or non-directories"
+    done
+    [[ ! -L "${target_file}" && ( ! -e "${target_file}" || -f "${target_file}" ) ]] ||
+        fail "refusing to replace a non-regular package file"
+    [[ -f "${package_source}" && ! -L "${package_source}" ]] ||
+        fail "local package must be a regular file"
+    [[ "$(readlink -f -- "${package_source}")" == "${package_source}" ]] ||
+        fail "local package path must not contain symlink components"
+
+    umask 022
+    mkdir --parents -- "${target_dir}"
+    temporary="$(mktemp "${target_dir}/.80_local_package.XXXXXX")"
+    trap cleanup EXIT
+    cp -- "${package_source}" "${temporary}"
+    # Verify the staged bytes before replacing an existing package.
+    verify_package "${temporary}" "${package_sha256}" "${package_name}" "${package_version}"
+    chmod 0644 -- "${temporary}"
+    mv --force --no-target-directory -- "${temporary}" "${target_file}"
+    temporary=''
+    printf 'Staged verified ARM64 package: %s\n' "${target_file}"
+}
+
+stage_flavor_packages() {
+    stage_package dist-vm-gui-all_37.6-1_arm64.deb \
+        cfbc4df411248263d2549cb79ac77a46ff94d2d2c650cf7f436e0dd80b929c67 \
+        dist-vm-gui-all 3:37.6-1
+    if [[ "${dist_build_flavor}" == whonix-workstation-lxqt ]]; then
+        stage_package kloak_0.9.1-1_arm64.deb \
+            5450f13d713c64ce0df748c38b00858f1fdd7e9d3a9dbc74b94192c7e6c47901 \
+            kloak 0.9.1-1
+    fi
+}
+
+main() {
+    if [[ "${dist_build_target_arch:-}" != arm64 ]]; then
+        return 0
+    fi
+    case "${dist_build_flavor:-}" in
+        whonix-gateway-lxqt|whonix-workstation-lxqt)
+            ;;
+        *)
+            return 0
+            ;;
+    esac
+
+    [[ "$(id -u)" == 0 ]] || fail "must run as root"
+    [[ "${MNTPOINT:-}" =~ ^/mnt/derivative-maker-grml-debootstrap\.[0-9]+$ ]] ||
+        fail "unexpected MNTPOINT"
+    [[ -d "${MNTPOINT}" && ! -L "${MNTPOINT}" ]] ||
+        fail "MNTPOINT must be a real directory"
+    [[ "$(readlink -f -- "${MNTPOINT}")" == "${MNTPOINT}" ]] ||
+        fail "MNTPOINT must not contain symlink components"
+    mountpoint --quiet -- "${MNTPOINT}" || fail "MNTPOINT is not mounted"
+    [[ -d "${MNTPOINT}/etc" && ! -L "${MNTPOINT}/etc" ]] ||
+        fail "target etc must be a real directory"
+    [[ "$(chroot "${MNTPOINT}" dpkg --print-architecture)" == arm64 ]] ||
+        fail "mounted guest is not ARM64"
+    stage_flavor_packages
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

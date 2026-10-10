@@ -1,0 +1,47 @@
+# Local VM state, credentials, downloads, and upstream checkouts.
+/builder/
+/downloads/
+/derivative-maker/
+
+# Keep only authored research notes; never include browser profiles.
+/research/*
+!/research/apple-silicon-performance.md
+!/research/pixman-benchmark.md
+
+# Track provenance, not images, packages, binaries, or checkpoints.
+/artifacts/*
+!/artifacts/BUILD-PROVENANCE.md
+
+# Keep compact benchmark evidence; raw logs and screenshots stay local.
+/logs/*
+!/logs/kloak-comparison/
+/logs/kloak-comparison/*
+!/logs/kloak-comparison/summary.json
+!/logs/kloak-comparison/method.json
+
+# Also exclude these wherever a future command creates them.
+__pycache__/
+*.pyc
+.DS_Store
+*.raw
+*.qcow2
+*.img
+*.iso
+*.utm/
+*.tar.gz
+*.deb
+*.pem
+id_ed25519
+id_rsa
+
+# Contributor-local environments and credentials.
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.ssh/
+*.key
+
+# Locally prepared source release assets.
+/dist/

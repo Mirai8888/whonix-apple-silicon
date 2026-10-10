@@ -1,0 +1,35 @@
+name: Bug report
+description: Report a reproducible problem in the tooling or documentation.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For vulnerabilities, follow SECURITY.md. Do not post credentials, VM images, browser profiles, full logs, or private paths.
+  - type: input
+    id: revision
+    attributes:
+      label: Affected commit
+      placeholder: Output of git rev-parse --short HEAD
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Relevant architecture, macOS, UTM, QEMU, Python, and guest versions; new build or existing bundle.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Commands and minimum setup, with private data removed.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Expected and actual behavior
+      description: Include a small sanitized error excerpt if useful. State whether this is a fixture, headless guest, or UTM result.
+    validations:
+      required: true

@@ -1,0 +1,309 @@
+{
+  "schema_version": 1,
+  "experiment": "Tor Browser local workload, 4 versus 2 vCPUs at 4096 MiB",
+  "decision": "Retain the existing 4-vCPU, 4096-MiB Workstation profile. No resource setting changed.",
+  "method": {
+    "order_vcpus": [
+      4,
+      2,
+      2,
+      4
+    ],
+    "memory_mib": 4096,
+    "launch_order": [
+      "cold",
+      "warm",
+      "warm",
+      "warm"
+    ],
+    "warmup_seconds": 40,
+    "completion_timer": "Linux pidfd/select exit notification with monotonic elapsed time",
+    "guest_memory_sample_interval_seconds": 0.25,
+    "host_rss_poll_interval_seconds": 0.5,
+    "qemu_version": "QEMU emulator version 11.1.1",
+    "cpu": "host",
+    "acceleration": "HVF",
+    "display": "headless; non-GL ramfb plus virtio-gpu-pci",
+    "storage": "Fresh private APFS raw-disk clone per boot; ordinary writes and flush behavior unchanged",
+    "network": "Single internal socket NIC through the existing Gateway",
+    "workload": "Normal Tor Browser wrapper and profile, local synchronous JS/layout workload and PNG encoding",
+    "source_sha256": {
+      "scripts/guest-browser-benchmark.py": "107a3c854dddd720d922b45f65cbfdbd6b918e955dad205382f202558f22298c",
+      "scripts/run-browser-benchmark.py": "8c0421805df05dcf682a06fa007a13ce89a35d638c7d1b25f4abbca59c8eb18b",
+      "scripts/run-headless-benchmark.py": "f86fc50b98b9905b5538c39619c53bd020c061993ef6308afff9afa3c2da242f",
+      "scripts/measure-host.py": "24744fef1d2d4ffaa25ee0a4438a2c8fffee91eb3015b9e426c51f3797ab81c6",
+      "scripts/prepare_utm.py": "a1eb8b29f6bf11312a3345fbbc8cabea4b2214c766a12545b2733ec222a9c4bf",
+      "benchmarks/browser-local.html": "6ccecac705a5ade54c609820ac7555f0d18ebfa0c82c4785e475af6f1941ed7a",
+      "benchmarks/whonix-arm64-browser-benchmark.service": "4a95f5d6b0555e110f6569de8bfa9f93fed9d5998523bb5d628a274a9e0a94a2",
+      "benchmarks/browser-workload-reference.png": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e"
+    },
+    "smoke_timings_excluded": true,
+    "primary_grouped_warm_statistic": "Median of the two per-boot warm medians; each per-boot median uses its three warm launches. Pooled-six median is secondary descriptive data."
+  },
+  "validation": {
+    "all_four_trials_exited_zero": true,
+    "all_four_individual_reports_match_aggregate_and_serial": true,
+    "all_eight_method_source_hashes_match_current_files": true,
+    "successful_captures": 16,
+    "reference_png": "benchmarks/browser-workload-reference.png",
+    "reference_png_sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+    "reference_png_dimensions": [
+      1366,
+      832
+    ],
+    "reference_png_bytes": 114091,
+    "all_16_reported_png_hashes_match_reference": true,
+    "reference_png_visually_validated": true,
+    "independently_extracted_final_png": {
+      "trial": "04-4cpu",
+      "launch": 1,
+      "sha256": "1c3962672690499a49c27aec1b683c1241ef1410fc33d0acc8cf1e7e489f7a6e",
+      "read_only_offline_extraction": true,
+      "visually_validated": true,
+      "visible_result": "PASS checksum=e5f37d05 cards=4000"
+    },
+    "scope": "The root agent visually validated the reference and extracted final PNG; remaining PNG equality is established from guest-reported SHA-256 hashes."
+  },
+  "trials": [
+    {
+      "trial": "01-4cpu",
+      "vcpus": 4,
+      "memory_mib": 4096,
+      "launch_durations_seconds": [
+        0.7116621670000001,
+        0.37331504200000154,
+        0.3396439169999965,
+        0.32733899999999494
+      ],
+      "cold_start_seconds": 0.7116621670000001,
+      "warm_median_seconds": 0.3396439169999965,
+      "minimum_sampled_guest_mem_available_mib": 3166.64453125,
+      "guest_counter_delta_sum": {
+        "oom_kill": 0,
+        "pgfault": 296108,
+        "pgmajfault": 1204,
+        "pgscan_direct": 0,
+        "pgscan_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_kswapd": 0,
+        "pswpin": 0,
+        "pswpout": 0
+      },
+      "guest_pressure_delta_sum_microseconds": {
+        "cpu": {
+          "some": 91009,
+          "full": 0
+        },
+        "io": {
+          "some": 124678,
+          "full": 117836
+        },
+        "memory": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      "host_process_cpu_percent_one_core": 32.855820427774205,
+      "host_process_sample_interval_seconds": 62.302507542,
+      "host_sampled_peak_rss_mib": 1346.359375,
+      "host_wide_io_delta_mib": {
+        "Swapins": 408.1875,
+        "Swapouts": 383.625,
+        "Pageouts": 13.328125
+      },
+      "guest_swap_total_kib": 0
+    },
+    {
+      "trial": "02-2cpu",
+      "vcpus": 2,
+      "memory_mib": 4096,
+      "launch_durations_seconds": [
+        0.8973191260000064,
+        0.7082052919999953,
+        0.6250031260000029,
+        0.7224718750000036
+      ],
+      "cold_start_seconds": 0.8973191260000064,
+      "warm_median_seconds": 0.7082052919999953,
+      "minimum_sampled_guest_mem_available_mib": 3183.171875,
+      "guest_counter_delta_sum": {
+        "oom_kill": 0,
+        "pgfault": 294681,
+        "pgmajfault": 1203,
+        "pgscan_direct": 0,
+        "pgscan_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_kswapd": 0,
+        "pswpin": 0,
+        "pswpout": 0
+      },
+      "guest_pressure_delta_sum_microseconds": {
+        "cpu": {
+          "some": 550941,
+          "full": 0
+        },
+        "io": {
+          "some": 185040,
+          "full": 144427
+        },
+        "memory": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      "host_process_cpu_percent_one_core": 31.94122706531502,
+      "host_process_sample_interval_seconds": 62.52107960400001,
+      "host_sampled_peak_rss_mib": 1506.421875,
+      "host_wide_io_delta_mib": {
+        "Swapins": 175.0625,
+        "Swapouts": 590.5625,
+        "Pageouts": 38.171875
+      },
+      "guest_swap_total_kib": 0
+    },
+    {
+      "trial": "03-2cpu",
+      "vcpus": 2,
+      "memory_mib": 4096,
+      "launch_durations_seconds": [
+        0.7193309590000041,
+        0.40308162499999867,
+        0.3700013750000011,
+        0.38964254199999715
+      ],
+      "cold_start_seconds": 0.7193309590000041,
+      "warm_median_seconds": 0.38964254199999715,
+      "minimum_sampled_guest_mem_available_mib": 3185.296875,
+      "guest_counter_delta_sum": {
+        "oom_kill": 0,
+        "pgfault": 292245,
+        "pgmajfault": 1202,
+        "pgscan_direct": 0,
+        "pgscan_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_kswapd": 0,
+        "pswpin": 0,
+        "pswpout": 0
+      },
+      "guest_pressure_delta_sum_microseconds": {
+        "cpu": {
+          "some": 339657,
+          "full": 0
+        },
+        "io": {
+          "some": 185169,
+          "full": 163418
+        },
+        "memory": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      "host_process_cpu_percent_one_core": 31.06569829317074,
+      "host_process_sample_interval_seconds": 62.995525853999965,
+      "host_sampled_peak_rss_mib": 1383.921875,
+      "host_wide_io_delta_mib": {
+        "Swapins": 349.796875,
+        "Swapouts": 540.125,
+        "Pageouts": 59.625
+      },
+      "guest_swap_total_kib": 0
+    },
+    {
+      "trial": "04-4cpu",
+      "vcpus": 4,
+      "memory_mib": 4096,
+      "launch_durations_seconds": [
+        0.6852137090000028,
+        0.38165054099999907,
+        0.39893720799999954,
+        0.42000850000000156
+      ],
+      "cold_start_seconds": 0.6852137090000028,
+      "warm_median_seconds": 0.39893720799999954,
+      "minimum_sampled_guest_mem_available_mib": 3130.640625,
+      "guest_counter_delta_sum": {
+        "oom_kill": 0,
+        "pgfault": 294550,
+        "pgmajfault": 1204,
+        "pgscan_direct": 0,
+        "pgscan_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_kswapd": 0,
+        "pswpin": 0,
+        "pswpout": 0
+      },
+      "guest_pressure_delta_sum_microseconds": {
+        "cpu": {
+          "some": 104192,
+          "full": 0
+        },
+        "io": {
+          "some": 121552,
+          "full": 112853
+        },
+        "memory": {
+          "some": 0,
+          "full": 0
+        }
+      },
+      "host_process_cpu_percent_one_core": 34.18802822322717,
+      "host_process_sample_interval_seconds": 60.898510625,
+      "host_sampled_peak_rss_mib": 1506.578125,
+      "host_wide_io_delta_mib": {
+        "Swapins": 478.578125,
+        "Swapouts": 219.875,
+        "Pageouts": 16.0
+      },
+      "guest_swap_total_kib": 0
+    }
+  ],
+  "aggregates_by_vcpu": {
+    "2": {
+      "boots": 2,
+      "cold_samples": 2,
+      "warm_samples": 6,
+      "cold_median_seconds": 0.8083250425000053,
+      "pooled_warm_median_seconds": 0.5140423755000008,
+      "per_boot_warm_medians_seconds": [
+        0.7082052919999953,
+        0.38964254199999715
+      ],
+      "median_of_boot_warm_medians_seconds": 0.5489239169999962,
+      "minimum_sampled_guest_mem_available_mib": 3183.171875,
+      "host_process_cpu_median_percent_one_core": 31.50346267924288,
+      "primary_warm_median_seconds": 0.5489239169999962
+    },
+    "4": {
+      "boots": 2,
+      "cold_samples": 2,
+      "warm_samples": 6,
+      "cold_median_seconds": 0.6984379380000014,
+      "pooled_warm_median_seconds": 0.3774827915000003,
+      "per_boot_warm_medians_seconds": [
+        0.3396439169999965,
+        0.39893720799999954
+      ],
+      "median_of_boot_warm_medians_seconds": 0.36929056249999803,
+      "minimum_sampled_guest_mem_available_mib": 3130.640625,
+      "host_process_cpu_median_percent_one_core": 33.52192432550069,
+      "primary_warm_median_seconds": 0.36929056249999803
+    }
+  },
+  "observed_4cpu_elapsed_time_reduction_percent_relative_to_2cpu": {
+    "cold_median_seconds": 13.594420402978313,
+    "pooled_warm_median_seconds": 26.565822295714657,
+    "median_of_boot_warm_medians_seconds": 32.72463613568498,
+    "primary_warm_median_seconds": 32.72463613568498
+  },
+  "limits": [
+    "Only two ordered boots per CPU count on an active host; no confidence interval or statistical significance claim.",
+    "Warm results overlap between individual boots, and the first two-vCPU boot is substantially slower than the second; pooled percentages are descriptive.",
+    "Cold means first browser launch after a fresh guest boot; host APFS caches were not purged and may remain warm.",
+    "The workload measures headless startup, local JS/layout and PNG encoding, not UTM GUI responsiveness, desktop frame rate, Tor throughput or native application parity.",
+    "Host CPU spans sampled boot, settling and benchmark time. Host RSS is sampled, not an exact peak or guest RAM demand.",
+    "Host swap/page counters include other applications. All trials experienced host-wide swapping; it cannot be attributed to the benchmark guests.",
+    "Guest available RAM is sampled at 0.25-second intervals; short-lived peaks can be missed. This small workload does not establish memory needs for sustained browsing.",
+    "Guests have zero SwapTotal, so zero guest swap counters do not demonstrate swap-backed safety. Launch-window OOM, reclaim and memory-pressure deltas were zero; this small workload does not justify reducing RAM."
+  ]
+}

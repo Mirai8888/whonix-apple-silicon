@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security reporting
+    url: https://github.com/Mirai8888/whonix-apple-silicon/blob/main/SECURITY.md
+    about: Read the private reporting process before posting vulnerability details.

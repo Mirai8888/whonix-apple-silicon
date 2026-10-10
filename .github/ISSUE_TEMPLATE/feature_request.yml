@@ -1,0 +1,17 @@
+name: Improvement proposal
+description: Propose a focused change to the experimental ARM64/UTM workflow.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the use case and current limitation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change and validation
+      description: Explain expected behavior, relevant security/privacy effects, and how the improvement could be measured or tested.
+    validations:
+      required: true
